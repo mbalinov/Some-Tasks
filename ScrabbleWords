@@ -2,3 +2,66 @@
 What is the 9 letter common word in English that will continue to be a real, 
 commonly used English word after you take away one letter at a time until there is only one left?
 */
+
+public static List<String> word() throws IOException {
+
+        List<String> allWordsList = new ArrayList<>();
+        URL wordUrl = new URL("https://scrabble-words.txt");
+        try (
+                BufferedReader br = new BufferedReader(new InputStreamReader(wordUrl.openConnection().getInputStream()))) {
+
+            allWordsList = br.lines().skip(2).toList().parallelStream()
+                    .filter(p -> p.length() <= 9)
+                    .filter(p -> (p.contains("A") || p.contains("I")))
+                    .toList();
+        } catch (IOException e) {
+            e.getMessage();
+        }
+
+
+        List<String> list2 = allWordsList
+                .parallelStream()
+                .filter(p -> p.length() == 2)
+                .toList();
+
+        List<String> list3 = buildFilteredList(allWordsList, list2, 3);
+        List<String> list4 = buildFilteredList(allWordsList, list3, 4);
+        List<String> list5 = buildFilteredList(allWordsList, list4, 5);
+        List<String> list6 = buildFilteredList(allWordsList, list5, 6);
+        List<String> list7 = buildFilteredList(allWordsList, list6, 7);
+        List<String> list8 = buildFilteredList(allWordsList, list7, 8);
+
+        return buildFilteredList(allWordsList, list8, 9);
+    }
+
+    public static List<String> buildFilteredList(List<String> allWordsList, List<String> listToCheck, int length) {
+        return allWordsList
+                .parallelStream()
+                .filter(p -> p.length() == length)
+                .filter(p -> matchInList(p, listToCheck))
+                .distinct()
+                .toList();
+    }
+
+    public static boolean matchInList(String longerWord, List<String> listToCheck) {
+        for (String i : listToCheck) {
+            if (matchedExceptOne(i, longerWord))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean matchedExceptOne(String shorterWord, String longerWord) {
+        int difference = 0;
+        int i = 0;
+        int j = 0;
+        while (i < shorterWord.length()) {
+            if (shorterWord.charAt(i++) != longerWord.charAt(j++)) {
+                difference++;
+                if (difference > 1)
+                    return false;
+                i--;
+            }
+        }
+        return true;
+    }
