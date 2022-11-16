@@ -6,7 +6,7 @@ commonly used English word after you take away one letter at a time until there 
 public static List<String> word() throws IOException {
 
         List<String> allWordsList = new ArrayList<>();
-        URL wordUrl = new URL("https://scrabble-words.txt");
+        URL wordUrl = new URL("https://scrabble-words.txt"); // https://raw.githubusercontent.com/nikiiv/JavaCodingTestOne/master/scrabble-words.txt
         try (
                 BufferedReader br = new BufferedReader(new InputStreamReader(wordUrl.openConnection().getInputStream()))) {
 
